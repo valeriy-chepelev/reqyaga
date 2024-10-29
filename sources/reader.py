@@ -6,6 +6,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 import configparser
 from time import sleep
+import pandas as pd
+from io import StringIO
 
 
 def read_config(filename):
@@ -41,7 +43,7 @@ def login(config):
     # Create Chrome Options and Service
     service = Service(executable_path='chromedriver.exe')
     options = Options()
-    options.add_argument("--headless")  # Run in headless mode
+    # options.add_argument("--headless")  # Run in headless mode
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) Apple"
                          "WebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36")
     options.add_argument("--disable-extensions")
@@ -80,8 +82,11 @@ def login(config):
 
 
 def tables(drv):
-    t = drv.find_elements(By.XPATH, '//table')
+    source = StringIO(drv.page_source)
+    t = pd.read_html(source)
     print(f"{len(t)} tables found.")
+    print(t)
+    # t = drv.find_elements(By.XPATH, '//table')
 
 
 cfg = read_config('reqyaga.ini')
@@ -92,3 +97,4 @@ driver.get("https://wiki.yandex.ru/mt/mt-rd/ff-e710f1/prorabotka-konstruktiva/"
 _wait_data(driver)
 tables(driver)
 input('Press enter')
+driver.close()
