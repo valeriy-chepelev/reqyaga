@@ -2,6 +2,7 @@
 - selenium
 - chromedriver.exe - locate in sources, see https://googlechromelabs.github.io/chrome-for-testing/#stable
 - pandas
+- lxml - optional dependency for pandas
 
 # Ini-file
 Ini-file named *reqyaga.ini* should be located in sources.

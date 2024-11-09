@@ -43,7 +43,7 @@ def login(config):
     # Create Chrome Options and Service
     service = Service(executable_path='chromedriver.exe')
     options = Options()
-    # options.add_argument("--headless")  # Run in headless mode
+    options.add_argument("--headless")  # Run in headless mode
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) Apple"
                          "WebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36")
     options.add_argument("--disable-extensions")
@@ -83,18 +83,22 @@ def login(config):
 
 def tables(drv):
     source = StringIO(drv.page_source)
-    t = pd.read_html(source)
-    print(f"{len(t)} tables found.")
-    print(t)
+    return pd.read_html(source)
+    # print(f"{len(t)} tables found.")
+    # print(t)
     # t = drv.find_elements(By.XPATH, '//table')
 
 
 cfg = read_config('reqyaga.ini')
 driver = login(cfg)
 # open data page
-driver.get("https://wiki.yandex.ru/mt/mt-rd/ff-e710f1/prorabotka-konstruktiva/"
-           "1.4.-moduli-binarnyx-signalov-mbs-ili-vxodovvyxodo/2.4.1.-trebovanija-k-mvv/")
+driver.get("https://wiki.yandex.ru/mt/mt-rd/ff-e710f1/application/")
 _wait_data(driver)
-tables(driver)
+for i, t in enumerate(tables(driver)):
+    print(f'Table {i}:')
+    t.set_index(0, inplace=True)  # use first column as index
+    t.columns = t.iloc[0]  # use first row as header
+    print(t.axes)
+    print(t.keys())
 input('Press enter')
 driver.close()
